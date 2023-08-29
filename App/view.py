@@ -48,7 +48,7 @@ def new_controller():
 
 def print_menu():
     print("Bienvenido")
-    print("1- Cargar información")
+    print("1- Cargar Datos")
     print("2- Ejecutar Requerimiento 1")
     print("3- Ejecutar Requerimiento 2")
     print("4- Ejecutar Requerimiento 3")
