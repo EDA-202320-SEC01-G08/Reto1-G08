@@ -43,7 +43,8 @@ def new_controller():
         Se crea una instancia del controlador
     """
     #TODO: Llamar la función del controlador donde se crean las estructuras de datos
-    pass
+    control = controller.new_controller()
+    return control
 
 
 def print_menu():
@@ -65,7 +66,23 @@ def load_data(control):
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    pass
+    results, goalsco, shootouts = controller.load_data(control)
+    return results, goalsco, shootouts
+
+def load_data_results(control):
+    """
+    Carga los datos
+    """
+    resultados = controller.loadResults(control, "Data/results-utf8-small.csv")
+    return resultados
+
+def load_data_shootouts(control):
+    resultados = controller.loadGoalsco(control, "Data/shootouts-utf8-small.csv")
+    return resultados
+
+def load_data_goalscorers(control):
+    resultados = controller.loadShootouts(control, "Data/goalscorers-utf8-small.csv")
+    return resultados
 
 
 def print_data(control, id):
@@ -73,14 +90,16 @@ def print_data(control, id):
         Función que imprime un dato dado su ID
     """
     #TODO: Realizar la función para imprimir un elemento
-    pass
+    printable = controller.get_data(control, id)
+    print(printable)
 
 def print_req_1(control):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    pass
+    printable = controller.req_1(control)
+    print(printable)
 
 
 def print_req_2(control):
@@ -88,7 +107,8 @@ def print_req_2(control):
         Función que imprime la solución del Requerimiento 2 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    printable = controller.req_2(control)
+    print(printable)
 
 
 def print_req_3(control):
@@ -96,7 +116,8 @@ def print_req_3(control):
         Función que imprime la solución del Requerimiento 3 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    printable = controller.req_3(control)
+    print(printable)
 
 
 def print_req_4(control):
@@ -104,7 +125,8 @@ def print_req_4(control):
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    printable = controller.req_4(control)
+    print(printable)
 
 
 def print_req_5(control):
@@ -112,7 +134,8 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    printable = controller.req_5(control)
+    print(printable)
 
 
 def print_req_6(control):
@@ -120,7 +143,8 @@ def print_req_6(control):
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    pass
+    printable = controller.req_6(control)
+    print(printable)
 
 
 def print_req_7(control):
@@ -128,7 +152,8 @@ def print_req_7(control):
         Función que imprime la solución del Requerimiento 7 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 7
-    pass
+    printable = controller.req_7(control)
+    print(printable)
 
 
 def print_req_8(control):
@@ -136,7 +161,8 @@ def print_req_8(control):
         Función que imprime la solución del Requerimiento 8 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 8
-    pass
+    printable = controller.req_8(control)
+    print(printable)
 
 
 # Se crea el controlador asociado a la vista
@@ -155,6 +181,10 @@ if __name__ == "__main__":
         if int(inputs) == 1:
             print("Cargando información de los archivos ....\n")
             data = load_data(control)
+            print("Resultados de los Partidos cargados: " + str(data[0]))
+            print("Jugadores con goles o asistencias cargados: " + str(data[1]))
+            print("Definiciones desde el punto penal cargados: " + str(data[2]))
+            
         elif int(inputs) == 2:
             print_req_1(control)
 

@@ -36,18 +36,46 @@ def new_controller():
     Crea una instancia del modelo
     """
     #TODO: Llamar la función del modelo que crea las estructuras de datos
-    pass
+    control = {
+        "model" : None
+    }
+    control["model"] = model.newCatalog()
+    return control
 
 
 # Funciones para la carga de datos
 
-def load_data(control, filename):
+def load_data(control):
     """
     Carga los datos del reto
     """
     # TODO: Realizar la carga de datos
-    pass
+    catalog = control["model"]
+    results = loadResults(catalog)
+    goalsco = loadGoalsco(catalog)
+    shootouts = loadShootouts(catalog)
+    return results, goalsco, shootouts
 
+def loadResults(catalog):
+    resultsfile = cf.data_dir + "results-utf8-small.csv"
+    input_file = csv.DictReader(open(resultsfile, encoding="utf-8"))
+    for result in input_file:
+        model.addResult(catalog, result)
+    return model.resultSize(catalog)
+
+def loadGoalsco(catalog):
+    goalscofile = cf.data_dir + "goalscorers-utf8-small.csv"
+    input_file = csv.DictReader(open(goalscofile, encoding="utf-8"))
+    for goalsco in input_file:
+        model.addGoalsco(catalog, goalsco)
+    return model.goalscoSize(catalog)
+
+def loadShootouts(catalog):
+    shootoutsfile = cf.data_dir + "shootouts-utf8-small.csv"
+    input_file = csv.DictReader(open(shootoutsfile, encoding="utf-8"))
+    for shootout in input_file:
+        model.addShootouts(catalog, shootout)
+        return model.shootoutSize(catalog)
 
 # Funciones de ordenamiento
 
@@ -67,6 +95,18 @@ def get_data(control, id):
     """
     #TODO: Llamar la función del modelo para obtener un dato
     pass
+
+def getResults(control, result):
+    resul = model.getResults(control["model"], result)
+    return resul
+
+def getGoalsco(control, gsco):
+    goalsc = model.getGoalsco(control["model"], gsco)
+    return goalsc
+
+def getShootouts(control, shootout):
+    shoot = model.getShootouts(control["model"], shootout)
+    return shoot
 
 
 def req_1(control):

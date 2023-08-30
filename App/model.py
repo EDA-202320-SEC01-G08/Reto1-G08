@@ -43,6 +43,17 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 
 # Construccion de modelos
 
+def newCatalog():
+    catalog = {"results": None, 
+               "goalsco": None, 
+               "shootouts": None}
+    
+    catalog["results"] = lt.newList("ARRAY_LIST")
+    catalog["goalsco"] = lt.newList("ARRAY_LIST")
+    catalog["shootouts"] = lt.newList("ARRAY_LIST")
+    
+    return catalog
+    
 
 def new_data_structs():
     """
@@ -62,6 +73,17 @@ def add_data(data_structs, data):
     #TODO: Crear la función para agregar elementos a una lista
     pass
 
+def addResult(catalog, result):
+    lt.addLast(catalog["results"], result)
+    return catalog
+
+def addGoalsco(catalog, goalsc):
+    lt.addLast(catalog["goalsco"], goalsc)
+    return catalog
+
+def addShootouts(catalog, shootout):
+    lt.addLast(catalog["shootouts"], shootout)
+    return catalog 
 
 # Funciones para creacion de datos
 
@@ -82,6 +104,27 @@ def get_data(data_structs, id):
     #TODO: Crear la función para obtener un dato de una lista
     pass
 
+def getResults(catalog, result):
+    resul = lt.isPresent(catalog["results"], result)
+    if resul > 0:
+        res = lt.getElement(catalog["results"], resul)
+        return res
+    return None
+
+def getGoalsco(catalog, goalsc):
+    goals = lt.isPresent(catalog["goalsco"], goalsc)
+    if goals > 0:
+        gsco = lt.getElement(catalog["goalsco"], goals)
+        return gsco
+    return None
+
+def getShootouts(catalog, shootout):
+    shoot = lt.isPresent(catalog["shootouts"], shootout)
+    if shoot > 0:
+        shoo = lt.getElement(catalog["shootouts"], shoot)
+        return shoo
+    return None
+
 
 def data_size(data_structs):
     """
@@ -89,6 +132,15 @@ def data_size(data_structs):
     """
     #TODO: Crear la función para obtener el tamaño de una lista
     pass
+
+def resultSize(catalog):
+    return lt.size(catalog["results"])
+
+def goalscoSize(catalog):
+    return lt.size(catalog["goalsco"])
+
+def shootoutSize(catalog):
+    return lt.size(catalog["shootouts"])
 
 
 def req_1(data_structs):
