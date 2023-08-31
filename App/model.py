@@ -50,11 +50,11 @@ def new_data_structs():
     """
     #TODO: Inicializar las estructuras de datos
     catalog = {"results": None, 
-               "goalsco": None, 
+               "goalscorers": None, 
                "shootouts": None}
     
     catalog["results"] = lt.newList("ARRAY_LIST")
-    catalog["goalsco"] = lt.newList("ARRAY_LIST")
+    catalog["goalscorers"] = lt.newList("ARRAY_LIST")
     catalog["shootouts"] = lt.newList("ARRAY_LIST")
     
     return catalog
@@ -74,7 +74,7 @@ def addResult(data_structs, data):
     return data_structs
 
 def addGoalsco(data_structs, data):
-    lt.addLast(data_structs["goalsco"], data)
+    lt.addLast(data_structs["goalscorers"], data)
     return data_structs
 
 def addShootouts(data_structs, data):
@@ -108,9 +108,9 @@ def getResults(catalog, result):
     return None
 
 def getGoalsco(catalog, goalsc):
-    goals = lt.isPresent(catalog["goalsco"], goalsc)
+    goals = lt.isPresent(catalog["goalscorers"], goalsc)
     if goals > 0:
-        gsco = lt.getElement(catalog["goalsco"], goals)
+        gsco = lt.getElement(catalog["goalscorers"], goals)
         return gsco
     return None
 
@@ -133,7 +133,7 @@ def resultSize(catalog):
     return lt.size(catalog["results"])
 
 def goalscoSize(catalog):
-    return lt.size(catalog["goalsco"])
+    return lt.size(catalog["goalscorers"])
 
 def shootoutSize(catalog):
     return lt.size(catalog["shootouts"])

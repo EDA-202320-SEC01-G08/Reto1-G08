@@ -27,7 +27,6 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
 assert cf
-from tabulate import tabulate
 import traceback
 
 """
@@ -61,27 +60,16 @@ def print_menu():
     print("0- Salir")
 
 
-def load_data(control):
-    """
-    Carga los datos
-    """
-    #TODO: Realizar la carga de datos
-    results, goalsco, shootouts = controller.load_data(control)
-    return results, goalsco, shootouts
-
-def load_data_results(control):
-    """
-    Carga los datos
-    """
+def loadResults(control):
     resultados = controller.loadResults(control, "Data/results-utf8-small.csv")
     return resultados
 
-def load_data_shootouts(control):
-    resultados = controller.loadGoalsco(control, "Data/shootouts-utf8-small.csv")
+def loadGoalsco(control):
+    resultados = controller.loadGoalsco(control, "Data/goalscorers-utf8-small.csv")
     return resultados
 
-def load_data_goalscorers(control):
-    resultados = controller.loadShootouts(control, "Data/goalscorers-utf8-small.csv")
+def loadShootouts(control):
+    resultados = controller.loadShootouts(control, "Data/shootouts-utf8-small.csv")
     return resultados
 
 
@@ -179,11 +167,32 @@ if __name__ == "__main__":
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
-            print("Cargando información de los archivos ....\n")
-            data = load_data(control)
-            print("Resultados de los Partidos cargados: " + str(data[0]))
-            print("Jugadores con goles o asistencias cargados: " + str(data[1]))
-            print("Definiciones desde el punto penal cargados: " + str(data[2]))
+            print("Cargando informacion de los archivos ....\n")
+            resultados, results = loadResults(control)
+            print("Se cargaron" + " " + str(resultados) + " " + "resultados de partidos...\n")
+            print("Primeros tres resultados de los partidos: ")
+            print(results["elements"][0:2])
+            print("\n")
+            print("Ultimos tres resultados de partidos: ")
+            print(results["elements"][-3:], "\n")
+            
+            print("Cargando informacion de los archivos ....\n")
+            resultados, goalscorers = loadGoalsco(control)
+            print("Se cargaron" + " " + str(resultados) + " " + "jugadores que marcaron gol o anotaciones...\n")
+            print("Primeros tres resultados de goleadores: ")
+            print(goalscorers["elements"][0:2])
+            print("\n")
+            print("Ultimos tres resultados de goleadores: ")
+            print(goalscorers["elements"][-3:], "\n")
+            
+            print("Cargando informacion de los archivos ....\n")
+            resultados, shootouts = loadShootouts(control)
+            print("Se cargaron" + " " + str(resultados) + " " + "definiciones de partidos desde el punto penal...\n")
+            print("Primeros tres resultados por penales: ")
+            print(shootouts["elements"][0:2])
+            print("\n")
+            print("Ultimos tres resultados por penales: ")
+            print(shootouts["elements"][-3:], "\n")
             
         elif int(inputs) == 2:
             print_req_1(control)

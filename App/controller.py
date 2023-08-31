@@ -36,46 +36,31 @@ def new_controller():
     Crea una instancia del modelo
     """
     #TODO: Llamar la función del modelo que crea las estructuras de datos
-    control = {
-        "model" : None
-    }
-    control["model"] = model.newCatalog()
+    control = model.new_data_structs()
     return control
-
 
 # Funciones para la carga de datos
 
-def load_data(control):
-    """
-    Carga los datos del reto
-    """
-    # TODO: Realizar la carga de datos
-    catalog = control["model"]
-    results = loadResults(catalog)
-    goalsco = loadGoalsco(catalog)
-    shootouts = loadShootouts(catalog)
-    return results, goalsco, shootouts
-
-def loadResults(catalog):
-    resultsfile = cf.data_dir + "results-utf8-small.csv"
-    input_file = csv.DictReader(open(resultsfile, encoding="utf-8"))
+def loadResults(control, filename):
+    input_file = csv.DictReader(open(filename, encoding="utf-8"))
     for result in input_file:
-        model.addResult(catalog, result)
-    return model.resultSize(catalog)
+        model.addResult(control, result)
+    model.sort(control["results"])
+    return model.resultSize(control), control["results"]
 
-def loadGoalsco(catalog):
-    goalscofile = cf.data_dir + "goalscorers-utf8-small.csv"
-    input_file = csv.DictReader(open(goalscofile, encoding="utf-8"))
-    for goalsco in input_file:
-        model.addGoalsco(catalog, goalsco)
-    return model.goalscoSize(catalog)
+def loadGoalsco(control, filename):
+    input_file = csv.DictReader(open(filename, encoding="utf-8"))
+    for goalscorer in input_file:
+        model.addGoalsco(control, goalscorer)
+    model.sort(control["goalscorers"])
+    return model.goalscoSize(control), control["goalscorers"]
 
-def loadShootouts(catalog):
-    shootoutsfile = cf.data_dir + "shootouts-utf8-small.csv"
-    input_file = csv.DictReader(open(shootoutsfile, encoding="utf-8"))
+def loadShootouts(control, filename):
+    input_file = csv.DictReader(open(filename, encoding="utf-8"))
     for shootout in input_file:
-        model.addShootouts(catalog, shootout)
-        return model.shootoutSize(catalog)
+        model.addShootouts(control, shootout)
+    model.sort(control["shootouts"])
+    return model.shootoutSize(control), control["shootouts"]
 
 # Funciones de ordenamiento
 
