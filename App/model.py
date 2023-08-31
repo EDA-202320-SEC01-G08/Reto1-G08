@@ -43,7 +43,12 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 
 # Construccion de modelos
 
-def newCatalog():
+def new_data_structs():
+    """
+    Inicializa las estructuras de datos del modelo. Las crea de
+    manera vacía para posteriormente almacenar la información.
+    """
+    #TODO: Inicializar las estructuras de datos
     catalog = {"results": None, 
                "goalsco": None, 
                "shootouts": None}
@@ -53,15 +58,6 @@ def newCatalog():
     catalog["shootouts"] = lt.newList("ARRAY_LIST")
     
     return catalog
-    
-
-def new_data_structs():
-    """
-    Inicializa las estructuras de datos del modelo. Las crea de
-    manera vacía para posteriormente almacenar la información.
-    """
-    #TODO: Inicializar las estructuras de datos
-    pass
 
 
 # Funciones para agregar informacion al modelo
@@ -73,17 +69,17 @@ def add_data(data_structs, data):
     #TODO: Crear la función para agregar elementos a una lista
     pass
 
-def addResult(catalog, result):
-    lt.addLast(catalog["results"], result)
-    return catalog
+def addResult(data_structs, data):
+    lt.addLast(data_structs["results"], data)
+    return data_structs
 
-def addGoalsco(catalog, goalsc):
-    lt.addLast(catalog["goalsco"], goalsc)
-    return catalog
+def addGoalsco(data_structs, data):
+    lt.addLast(data_structs["goalsco"], data)
+    return data_structs
 
-def addShootouts(catalog, shootout):
-    lt.addLast(catalog["shootouts"], shootout)
-    return catalog 
+def addShootouts(data_structs, data):
+    lt.addLast(data_structs["shootouts"], data)
+    return data_structs
 
 # Funciones para creacion de datos
 
