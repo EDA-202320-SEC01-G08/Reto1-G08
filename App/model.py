@@ -226,7 +226,7 @@ def sort_criteria(data_1, data_2):
         _type_: _description_
     """
     #TODO: Crear función comparadora para ordenar
-    pass
+    return (str(data_1["date"]) > str(data_2["date"]))
 
 
 def sort(data_structs):
@@ -234,4 +234,4 @@ def sort(data_structs):
     Función encargada de ordenar la lista con los datos
     """
     #TODO: Crear función de ordenamiento
-    pass
+    sa.sort(data_structs, sort_criteria)
