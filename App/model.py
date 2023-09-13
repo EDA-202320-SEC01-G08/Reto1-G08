@@ -59,15 +59,7 @@ def new_data_structs():
     
     return catalog
 
-
 # Funciones para agregar informacion al modelo
-
-def add_data(data_structs, data):
-    """
-    Función para agregar nuevos elementos a la lista
-    """
-    #TODO: Crear la función para agregar elementos a una lista
-    pass
 
 def addResult(data_structs, data):
     lt.addLast(data_structs["results"], data)
@@ -79,6 +71,30 @@ def addGoalsco(data_structs, data):
 
 def addShootouts(data_structs, data):
     lt.addLast(data_structs["shootouts"], data)
+    return data_structs
+
+def addResultsOrd(data_structs, data, opcion_array):
+    if opcion_array == "1":
+        lt.addLast(data_structs["results"], data)
+    elif opcion_array == "2":
+        data_structs["results"] = lt.newList("LINKED_LIST")
+        lt.addLast(data_structs["results"], data)
+    return data_structs
+
+def addGoalscorersOrd(data_structs, data, opcion_array):
+    if opcion_array == "1":
+        lt.addLast(data_structs["goalscorers"], data)
+    elif opcion_array == "2":
+        data_structs["goalscorers"] = lt.newList("LINKED_LIST")
+        lt.addLast(data_structs["goalscorers"], data)
+    return data_structs
+
+def addShootoutsOrd(data_structs, data, opcion_array):
+    if opcion_array== "1":
+        lt.addLast(data_structs["shootouts"], data)
+    elif opcion_array == "2":
+        data_structs["shootouts"] = lt.newList("LINKED_LIST")
+        lt.addLast(data_structs["shootouts"], data)
     return data_structs
 
 # Funciones para creacion de datos
@@ -212,6 +228,15 @@ def compare(data_1, data_2):
     #TODO: Crear función comparadora de la lista
     pass
 
+def compareresults(result1, result2):
+    return (float(result1["date"]) < float(result2["date"]))
+
+def comparegoalscorers(goalscorer1, goalscorer2):
+    return (float(goalscorer1["date"]) < float(goalscorer2["date"]))
+
+def compareshootouts(shootout1, shootout2):
+    return (float(shootout1["date"]) < float(shootout2["date"]))
+
 # Funciones de ordenamiento
 
 
@@ -226,12 +251,31 @@ def sort_criteria(data_1, data_2):
         _type_: _description_
     """
     #TODO: Crear función comparadora para ordenar
-    return (str(data_1["date"]) > str(data_2["date"]))
+    return (str(data_1["date"]) < str(data_2["date"]))
 
-
-def sort(data_structs):
+def sort(data_structs, sort_option="shell"):
     """
     Función encargada de ordenar la lista con los datos
     """
     #TODO: Crear función de ordenamiento
-    sa.sort(data_structs, sort_criteria)
+    if sort_option == "shell":
+        sa.sort(data_structs, sort_criteria)
+    elif sort_option == "insertion":
+        sa.sort(data_structs, sort_criteria)
+    elif sort_option == "selection":
+        sa.sort(data_structs, sort_criteria)
+        
+def sortResults(control, size):
+    sub_list = lt.subList(control["results"], 1, size)
+    sorted_list = sa.sort(sub_list, compareresults)
+    return sorted_list
+
+def sortGoalscorers(control, size):
+    sub_list = lt.subList(control["goalscorers"], 1, size)
+    sorted_list = sa.sort(sub_list, comparegoalscorers)
+    return sorted_list
+
+def sortShootouts(control, size):
+    sub_list = lt.subList(control["shootouts"], 1, size)
+    sorted_list = sa.sort(sub_list, compareshootouts)
+    return sorted_list

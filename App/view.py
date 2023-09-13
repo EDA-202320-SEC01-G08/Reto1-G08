@@ -20,6 +20,7 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+from tabulate import tabulate
 import config as cf
 import sys
 import controller
@@ -36,6 +37,12 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+def list_python(list) -> None:
+    python_list = []
+    for i in list["elements"]:
+        python_list.append(i)
+        
+    return python_list
 
 def new_controller():
     """
@@ -43,6 +50,11 @@ def new_controller():
     """
     #TODO: Llamar la función del controlador donde se crean las estructuras de datos
     control = controller.new_controller()
+    return control
+
+def new_controller_array():
+    
+    control = controller.new_controller_array()
     return control
 
 
@@ -57,6 +69,8 @@ def print_menu():
     print("7- Ejecutar Requerimiento 6")
     print("8- Ejecutar Requerimiento 7")
     print("9- Ejecutar Requerimiento 8")
+    print("10- Cargar Datos segun tipo de representacion de lista")
+    print("11- Analizar los tiempos de tipos de ordenamiento")
     print("0- Salir")
 
 
@@ -72,6 +86,32 @@ def loadShootouts(control):
     resultados = controller.loadShootouts(control, "Data/shootouts-utf8-small.csv")
     return resultados
 
+def loadResultsOrd(control, archivo, opcion_array):
+    if archivo == "1":
+        resultados = controller.loadResultsOrd(control, "Data/results-utf8-20pct.csv", opcion_array)
+    elif archivo == "2":
+        resultados = controller.loadResultsOrd(control, "Data/results-utf8-50pct.csv", opcion_array)
+    elif archivo == "3":
+        resultados = controller.loadResultsOrd(control, "Data/results-utf8-large.csv", opcion_array)
+    return resultados   
+
+def loadShootoutsOrd(control, archivo, opcion_array):
+    if archivo == "1":
+        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-20pct.csv", opcion_array)
+    elif archivo == "2":
+        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-50pct.csv", opcion_array)
+    elif archivo == "3":
+        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-large.csv", opcion_array)
+    return resultados
+
+def loadGoalscorersOrd(control, archivo, opcion_array):
+    if archivo == "1":
+        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-20pct.csv", opcion_array)
+    elif archivo == "2":
+        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-50pct.csv", opcion_array)
+    elif archivo == "3":
+        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-large.csv", opcion_array)
+    return resultados
 
 def print_data(control, id):
     """
@@ -152,9 +192,9 @@ def print_req_8(control):
     printable = controller.req_8(control)
     print(printable)
 
-
 # Se crea el controlador asociado a la vista
 control = new_controller()
+control_array = new_controller_array()
 
 # main del reto
 if __name__ == "__main__":
@@ -169,30 +209,39 @@ if __name__ == "__main__":
         if int(inputs) == 1:
             print("Cargando informacion de los archivos ....\n")
             resultados, results = loadResults(control)
+            lista_python = list_python(results)
             print("Se cargaron" + " " + str(resultados) + " " + "resultados de partidos...\n")
             print("Primeros tres resultados de los partidos: ")
-            print(results["elements"][0:2])
+            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
+            # print(results["elements"][0:3])
             print("\n")
             print("Ultimos tres resultados de partidos: ")
-            print(results["elements"][-3:], "\n")
+            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
+            # print(results["elements"][-3:], "\n")
             
             print("Cargando informacion de los archivos ....\n")
             resultados, goalscorers = loadGoalsco(control)
+            lista_python = list_python(goalscorers)
             print("Se cargaron" + " " + str(resultados) + " " + "jugadores que marcaron gol o anotaciones...\n")
             print("Primeros tres resultados de goleadores: ")
-            print(goalscorers["elements"][0:2])
+            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
+            # print(goalscorers["elements"][0:3])
             print("\n")
             print("Ultimos tres resultados de goleadores: ")
-            print(goalscorers["elements"][-3:], "\n")
+            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
+            # print(goalscorers["elements"][-3:], "\n")
             
             print("Cargando informacion de los archivos ....\n")
             resultados, shootouts = loadShootouts(control)
+            lista_python = list_python(shootouts)
             print("Se cargaron" + " " + str(resultados) + " " + "definiciones de partidos desde el punto penal...\n")
             print("Primeros tres resultados por penales: ")
-            print(shootouts["elements"][0:2])
+            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
+            # print(shootouts["elements"][0:3])
             print("\n")
             print("Ultimos tres resultados por penales: ")
-            print(shootouts["elements"][-3:], "\n")
+            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
+            # print(shootouts["elements"][-3:], "\n")
             
         elif int(inputs) == 2:
             print_req_1(control)
@@ -217,7 +266,93 @@ if __name__ == "__main__":
 
         elif int(inputs) == 9:
             print_req_8(control)
-
+            
+        elif int(inputs) == 10:
+            print("Seleccione el tipo de representacion de lista que desea:")
+            print("1. ARRAY_LIST")
+            print("2. LINKED_LIST")
+            opcion = input("Seleccione una opcion") 
+            if opcion == "1":
+                tipo = "ARRAY_LIST"
+            elif opcion == "2":
+                tipo = "LINKED_LIST"
+            else:
+                print("No ha seleccionado una opcion valida. Se ejecutara la representacion por defecto:")
+                tipo = "ARRAY_LIST"
+                
+            print("Seleccione el tamaño del archivo que desea manejar:")
+            print("1. -20pct")
+            print("2. -50pct")
+            print("3. -large")
+            
+            tamaño = input("Elija una opcion:")
+            
+            if tamaño == "1":
+                muestra = "-20pct"
+            elif tamaño == "2":
+                muestra = "-50pct"
+            elif tamaño == "3":
+                muestra = "-large"
+            else:
+                print("No ha seleccionado una opcion valida: Se seleccionara el archivo mas pequeño:")
+                muestra = "-20pct"
+                
+            print("Elija el tipo de ordenamiento que desea utilizar: ")
+            print("1- Insertion")
+            print("2- Shell")
+            print("3- Selection")
+            sort_type = input("Elija una opcion de ordenamiento: ")
+            
+            if sort_type == "1":
+                sort_option = "insertion"
+            elif sort_type == "2":
+                sort_option= "shell"
+            elif sort_type == "3":
+                sort_option = "selection"
+            else:
+                print("No ha escogido una opcion valida: Se ejecutara el ordamiento por defecto: ")
+                muestra = "shell"
+                
+            resultados, results = loadResultsOrd(control, opcion, muestra)
+            lista_python = list_python(results)
+            print("Cargando archivos...")
+            print("Se cargaron" + str(resultados) + "resultados de partidos. ")
+            print("Primeros 3 resultados de partidos: ")
+            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
+            print("\n")
+            print("Ultimos 3 resultados de partidos: ")
+            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
+            print("\n")
+            
+            resultados, goalscorers = loadGoalscorersOrd(control, opcion, muestra)
+            lista_python = list_python(goalscorers)
+            print("Cargando archivos...")
+            print("Se cargaron" + str(resultados) + "goleadores de torneos. ")
+            print("Primeros 3 goleadores de torneos: ")
+            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
+            print("\n")
+            print("Ultimos 3 goleadores de torneos: ")
+            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
+            print("\n")
+            
+            resultados, shootouts = loadShootoutsOrd(control, opcion, muestra)
+            lista_python = list_python(shootouts)
+            print("Cargando archivos...")
+            print("Se cargaron" + str(resultados) + "resultados de partidos desde el punto penal. ")
+            print("Primeros 3 resultados de partidos desde el punto penal: ")
+            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
+            print("\n")
+            print("Ultimos 3 resultados de partidos desde el punto penal: ")
+            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
+            print("\n")
+            
+        elif int(inputs) == 11:
+            size = input("Indique el tamaño de la muestra que desea analizar:")
+            result = controller.sortResults(control, int(size))
+            delta_time = f"{result[0]:.3f}"
+            sorted_list = result[1]
+            print("Para", size, "elementos, delta de tiempo: ", str(delta_time), "[ms]\n")
+                
         elif int(inputs) == 0:
             working = False
             print("\nGracias por utilizar el programa") 

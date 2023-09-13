@@ -39,6 +39,10 @@ def new_controller():
     control = model.new_data_structs()
     return control
 
+def new_controller_array():
+    control = model.new_data_structs()
+    return control
+
 # Funciones para la carga de datos
 
 def loadResults(control, filename):
@@ -64,13 +68,53 @@ def loadShootouts(control, filename):
 
 # Funciones de ordenamiento
 
-def sort(control):
-    """
-    Ordena los datos del modelo
-    """
-    #TODO: Llamar la función del modelo para ordenar los datos
-    pass
+def loadResultsOrd(control, filename, opcion_array):
+    
+    input_file = csv.DictReader(open(filename, encoding="utf-8"))
+    for i in input_file:
+        model.addResultsOrd(control, i, opcion_array)
+        
+    model.sort(control["results"])
+    return model.resultSize(control), control["results"]
 
+def loadShootoutsOrd(control, filename, opcion_array):
+    
+    input_file = csv.DictReader(open(filename, encoding="utf-8"))
+    for i in input_file:
+        model.addShootoutsOrd(control, i, opcion_array)
+        
+    model.sort(control["shootouts"])
+    return model.shootoutSize(control), control["shootouts"]
+
+def loadGoalscorersOrd(control, filename, opcion_array):
+    
+    input_file = csv.DictReader(open(filename, encoding="utf-8"))
+    for i in input_file:
+        model.addGoalscorersOrd(control, i, opcion_array)
+        
+    model.sort(control["goalscorers"])
+    return model.goalscoSize(control), control["goalscorers"]
+
+def sortResults(control, size):
+    start_time = getTime()
+    sorted_list = model.sortResults(control["model"], size)
+    end_time = getTime()
+    delta_time = deltaTime(start_time, end_time)
+    return delta_time, sorted_list
+
+def sortGoalscorers(control, size):
+    start_time = getTime()
+    sorted_list = model.sortGoalscorers(control["model"], size)
+    end_time = getTime()
+    delta_time = deltaTime(start_time, end_time)
+    return delta_time, sorted_list
+
+def sortShootouts(control, size):
+    start_time = getTime()
+    sorted_list = model.sortShootouts(control["model"], size)
+    end_time = getTime()
+    delta_time = deltaTime(start_time, end_time)
+    return delta_time, sorted_list
 
 # Funciones de consulta sobre el catálogo
 
@@ -159,14 +203,14 @@ def req_8(control):
 
 # Funciones para medir tiempos de ejecucion
 
-def get_time():
+def getTime():
     """
     devuelve el instante tiempo de procesamiento en milisegundos
     """
     return float(time.perf_counter()*1000)
 
 
-def delta_time(start, end):
+def deltaTime(start, end):
     """
     devuelve la diferencia entre tiempos de procesamiento muestreados
     """
