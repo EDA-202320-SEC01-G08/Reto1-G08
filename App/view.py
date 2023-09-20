@@ -29,6 +29,7 @@ from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
 assert cf
 import traceback
+import threading
 
 """
 La vista se encarga de la interacción con el usuario
@@ -195,9 +196,10 @@ def print_req_8(control):
 # Se crea el controlador asociado a la vista
 control = new_controller()
 control_array = new_controller_array()
+default_limit = 1000
 
 # main del reto
-if __name__ == "__main__":
+def menu_cycle():
     """
     Menu principal
     """
@@ -359,3 +361,11 @@ if __name__ == "__main__":
         else:
             print("Opción errónea, vuelva a elegir.\n")
     sys.exit(0)
+    
+if __name__ == "__main__":
+    # TODO modificar main para reserar memoria (parte 2)
+    threading.stack_size(67108864*2)
+    sys.setrecursionlimit(default_limit*1000000)
+    thread = threading.Thread(target=menu_cycle)
+    thread.start()
+    menu_cycle()
