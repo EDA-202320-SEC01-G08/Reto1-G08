@@ -27,9 +27,9 @@ import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
+from time import time
 assert cf
 import traceback
-import threading
 
 """
 La vista se encarga de la interacción con el usuario
@@ -71,48 +71,51 @@ def print_menu():
     print("8- Ejecutar Requerimiento 7")
     print("9- Ejecutar Requerimiento 8")
     print("10- Cargar Datos segun tipo de representacion de lista")
-    print("11- Analizar los tiempos de tipos de ordenamiento")
     print("0- Salir")
 
 
 def loadResults(control):
-    resultados = controller.loadResults(control, "Data/results-utf8-small.csv")
+    resultados = controller.loadResults(control, "Data/results-utf8-large.csv")
     return resultados
 
 def loadGoalsco(control):
-    resultados = controller.loadGoalsco(control, "Data/goalscorers-utf8-small.csv")
+    resultados = controller.loadGoalsco(control, "Data/goalscorers-utf8-large.csv")
     return resultados
 
 def loadShootouts(control):
-    resultados = controller.loadShootouts(control, "Data/shootouts-utf8-small.csv")
+    resultados = controller.loadShootouts(control, "Data/shootouts-utf8-large.csv")
     return resultados
 
-def loadResultsOrd(control, archivo, opcion_array):
+
+
+def loadResultsOrd(control, archivo, opcion_array, sort_option):
     if archivo == "1":
-        resultados = controller.loadResultsOrd(control, "Data/results-utf8-20pct.csv", opcion_array)
+        resultados = controller.loadResultsOrd(control, "Data/results-utf8-20pct.csv", opcion_array, sort_option)
     elif archivo == "2":
-        resultados = controller.loadResultsOrd(control, "Data/results-utf8-50pct.csv", opcion_array)
+        resultados = controller.loadResultsOrd(control, "Data/results-utf8-50pct.csv", opcion_array, sort_option)
     elif archivo == "3":
-        resultados = controller.loadResultsOrd(control, "Data/results-utf8-large.csv", opcion_array)
+        resultados = controller.loadResultsOrd(control, "Data/results-utf8-large.csv", opcion_array, sort_option)
     return resultados   
 
 def loadShootoutsOrd(control, archivo, opcion_array):
     if archivo == "1":
-        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-20pct.csv", opcion_array)
+        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-20pct.csv", opcion_array, sort_option)
     elif archivo == "2":
-        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-50pct.csv", opcion_array)
+        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-50pct.csv", opcion_array, sort_option)
     elif archivo == "3":
-        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-large.csv", opcion_array)
+        resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-large.csv", opcion_array, sort_option)
     return resultados
 
 def loadGoalscorersOrd(control, archivo, opcion_array):
     if archivo == "1":
-        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-20pct.csv", opcion_array)
+        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-20pct.csv", opcion_array, sort_option)
     elif archivo == "2":
-        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-50pct.csv", opcion_array)
+        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-50pct.csv", opcion_array, sort_option)
     elif archivo == "3":
-        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-large.csv", opcion_array)
+        resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-large.csv", opcion_array, sort_option)
     return resultados
+
+
 
 def print_data(control, id):
     """
@@ -122,13 +125,24 @@ def print_data(control, id):
     printable = controller.get_data(control, id)
     print(printable)
 
-def print_req_1(control):
+def print_req_1(control, matches, team, condition):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    printable = controller.req_1(control)
-    print(printable)
+    print("==========Req No. 1 outputs==========")
+    resultados, results = controller.getMatchbyTeam(control, team, condition)
+    if matches > 6:
+        print("Total matches found: " + str(resultados) )
+        print("Selecting " + str(matches) + " matches...\n")
+        print("Primeros tres resultados:")
+        print(tabulate(results[:matches][:3], headers="keys", tablefmt="grid"))
+        print("\n")
+        print("Ultimos tres resultados: ")
+        print(tabulate(results[:matches][-3:], headers="keys", tablefmt="grid"))
+    else:
+        print("Se han cargado " + str(resultados) + " resultados...\n")
+        print(tabulate(results[:matches], headers="keys", tablefmt="grid"))
 
 
 def print_req_2(control):
@@ -136,26 +150,74 @@ def print_req_2(control):
         Función que imprime la solución del Requerimiento 2 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 2
-    printable = controller.req_2(control)
-    print(printable)
+    nombre_jugador = input("Ingrese el nombre del jugador a consultar: ")
+    size = input("Ingrese el numero de goles que desea conocer: ")
+    
+    
+    printable = controller.getGoalsbyPlayer(control, nombre_jugador, int(size))
+    
+    print(f"=============== Req 2 Inputs ===============\n\nNombre del jugador: {nombre_jugador}\nNumero de goles: {size}\n")
+    print(f"=============== Req 2 Results ===============\n\nNumero de goles encontrados: {len(printable)}\n")
+        
+        
+    if len(printable) > 6:
+        print("Se han encontrado más de 6 registros...")
+        ult = printable[:3]
+        prim = printable[-3:]
+        print(tabulate(ult+prim, headers="keys", tablefmt="grid"))
+    else:
+        print("Se han encontrado menos de 6 registros...")
+        print(tabulate(printable, headers="keys", tablefmt="grid"))
 
 
-def print_req_3(control):
+def print_req_3(control, team, fecha_inicio, fecha_fin):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 3
-    printable = controller.req_3(control)
-    print(printable)
-
+    resultados_total, resultados_local, resultados_visitante,  results = controller.getResultsbyTeam(control, team, fecha_inicio, fecha_fin)
+    
+    if resultados_total > 6:
+        print(str(team) + " Total games: " + str(resultados_total))
+        print(str(team) + " Total home games: " + str(resultados_local))
+        print(str(team) + " Total away games: " + str(resultados_visitante))
+        print("Primeros tres resultados:")
+        print(tabulate(results[:3], headers="keys", tablefmt="grid"))
+        print("\n")
+        print("Ultimos tres resultados: ")
+        print(tabulate(results[-3:], headers="keys", tablefmt="grid"))
+    else:
+        print(str(team) + " Total games: " + str(resultados_total))
+        print(str(team) + " Total home games: " + str(resultados_local))
+        print(str(team) + " Total away games: " + str(resultados_visitante))
+        print(tabulate(results, headers="keys", tablefmt="grid"))
 
 def print_req_4(control):
     """
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
-    printable = controller.req_4(control)
-    print(printable)
+    nombre_torneo = input("Ingrese el nombre del torneo: ")
+    print("Ingrese el periodo de fechas en el que se disputa el torneo: (YYYY-MM-DD)")
+    fecha_inicio = input("Fecha de inicio: ")
+    fecha_fin = input("Fecha de finalizacion del torneo: ")
+    printable, paises, ciudades = controller.getDatabyTournament(control, nombre_torneo, fecha_inicio, fecha_fin)
+    list = []
+    for i in lt.iterator(printable):
+        i.pop("neutral")
+        list.append(i)
+        
+    print(f"=============== Req 4 Inputs ===============\n\nTournament: {nombre_torneo}\nFecha inicio: {fecha_inicio}\nFecha final: {fecha_fin}\n")
+    print(f"=============== Req 4 Results ===============\n\n{nombre_torneo} partidos totales: {lt.size(printable)}\n{nombre_torneo} paises totales:{len(paises)}\n{nombre_torneo} total de ciudades: {len(ciudades)}\n")
+    
+    if len(list) > 6:
+        print("Se han encontrado mas de 6 resultados: ")
+        ult = list[:3]
+        prim = list[-3:]
+        print(tabulate(ult + prim, headers="keys", tablefmt="grid"))
+    else:
+        print("se han encontrado los siguientes resultados: ")
+        print(tabulate(list, headers="keys", tablefmt="grid"))
 
 
 def print_req_5(control):
@@ -163,8 +225,30 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    printable = controller.req_5(control)
-    print(printable)
+    nombre_jugador = input("ingrese el nombre del jugador que desea conocer: ")
+    print("ingrese el intervalo de fechas del periodo que desea conocer: (YYYY-MM-DD)")
+    fecha_inicio = input("Fecha de inicio: ")
+    fecha_fin = input("Fecha de finalizacion: ")
+    printable, penalties, own_goals, tournaments = controller.getDatabyPlayer(control, nombre_jugador, fecha_inicio, fecha_fin)
+      
+    list = []
+    for i in lt.iterator(printable):
+        i.pop("scorer")
+        list.append(i)
+    
+    print(f"=============== Req 5 Inputs ===============\n\nJugador: {nombre_jugador}\nFecha inicio: {fecha_inicio}\nFecha final: {fecha_fin}\n")
+    print(f"=============== Req 5 Results ===============\n\n{nombre_jugador} goles totales: {lt.size(printable)}\n{nombre_jugador} torneos totales:{tournaments}\n{nombre_jugador} total de penalties: {penalties}\n{nombre_jugador} total de autogoles: {own_goals}\n")
+    
+    if len(list) > 6:
+        print("Se han encontrado mas de 6 resultados: ")
+        ult = list[:3]
+        prim = list[-3:]
+        print(tabulate(ult+prim, headers="keys", tablefmt="grid"))
+    else: 
+        print("Se han encontrado los siguientes resultados: ")
+        print(tabulate(list, headers="keys", tablefmt="grid"))
+        
+    print("Goles", lt.size(printable), "Penales", penalties, "Autos", own_goals)
 
 
 def print_req_6(control):
@@ -172,8 +256,11 @@ def print_req_6(control):
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    printable = controller.req_6(control)
-    print(printable)
+    resultados_total, results = controller.getBestTeams(control, fecha_inicio, fecha_fin)
+    
+    
+    print("Total games: " + str(resultados_total))
+    print(tabulate(results, headers="keys", tablefmt="grid"))
 
 
 def print_req_7(control):
@@ -181,7 +268,7 @@ def print_req_7(control):
         Función que imprime la solución del Requerimiento 7 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 7
-    printable = controller.req_7(control)
+    printable = controller.getBestPlayers(control)
     print(printable)
 
 
@@ -190,16 +277,53 @@ def print_req_8(control):
         Función que imprime la solución del Requerimiento 8 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 8
-    printable = controller.req_8(control)
-    print(printable)
+    n_years1, n_matches1, home_matches1, away_matches1, oldest_date1, newest_match1, elements1, n_years2, n_matches2, home_matches2, away_matches2, oldest_date2, newest_match2, elements2, n_joint_matches, joint_wins1, joint_losses1, joint_wins2, joint_losses2, joint_draws, newest_joint_match, scores, team1, team2 =controller.req_8(control)
+    for element in elements1:
+        if type(element['top_scorer'])==dict:
+            element['top_scorer']=tabulate([element['top_scorer']], headers="keys", tablefmt="grid")
+    for element in elements2:
+        if type(element['top_scorer'])==dict:
+            element['top_scorer']=tabulate([element['top_scorer']], headers="keys", tablefmt="grid")
+    print(f'{"-"*5}{team1} Statistics{"-"*50}')
+    print(f'{"-"*5}Years: {n_years1}{"-"*50}')
+    print(f'{"-"*5}Total matches: {n_matches1}{"-"*50}')
+    print(f'{"-"*5}Total home matches: {home_matches1}{"-"*50}')
+    print(f'{"-"*5}Total away matches: {away_matches1}{"-"*50}')
+    print(f'{"-"*5}Oldest match date: {oldest_date1}{"-"*50}')
+    print(f'{"-"*5} Newest match data {"-"*50}')
+    print(f'{tabulate([newest_match1], headers="keys", tablefmt="grid")}')
+    print(f'{"-"*5} Yearly statistics {"-"*50}')
+    print(f'{tabulate(elements1, headers="keys", tablefmt="grid")}')
+
+    print(f'{"-"*5}{team2} Statistics{"-"*50}')
+    print(f'{"-"*5}Years: {n_years2}{"-"*50}')
+    print(f'{"-"*5}Total matches: {n_matches2}{"-"*50}')
+    print(f'{"-"*5}Total home matches: {home_matches2}{"-"*50}')
+    print(f'{"-"*5}Total away matches: {away_matches2}{"-"*50}')
+    print(f'{"-"*5}Oldest match date: {oldest_date2}{"-"*50}')
+    print(f'{"-"*5} Newest match data {"-"*50}')
+    print(f'{tabulate([newest_match2], headers="keys", tablefmt="grid")}')
+    print(f'{"-"*5} Yearly statistics {"-"*50}')
+    print(f'{tabulate(elements2, headers="keys", tablefmt="grid")}')
+
+    print(f'{"-"*5}{team1} vs {team2} Statistics{"-"*50}')
+    print(f'{"-"*5}Total matches: {n_joint_matches}{"-"*50}')
+    print(f'{"-"*5}Total wins for {team1}: {joint_wins1}{"-"*50}')
+    print(f'{"-"*5}Total losses for {team1}: {joint_losses1}{"-"*50}')
+    print(f'{"-"*5}Total wins for {team2}: {joint_wins2}{"-"*50}')
+    print(f'{"-"*5}Total losses for {team2}: {joint_losses2}{"-"*50}')
+    print(f'{"-"*5}Total draws: {joint_draws}{"-"*50}')
+    print(f'{"-"*5} Newest match data {"-"*50}')
+    print(f'{tabulate([newest_joint_match], headers="keys", tablefmt="grid")}')
+    print(f'{"-"*5} Match scores {"-"*50}')
+    print(f'{tabulate(scores, headers="keys", tablefmt="grid")}')
 
 # Se crea el controlador asociado a la vista
 control = new_controller()
-control_array = new_controller_array()
-default_limit = 1000
+control_array = new_controller()
 
 # main del reto
-def menu_cycle():
+if __name__ == "__main__":
     """
     Menu principal
     """
@@ -210,49 +334,62 @@ def menu_cycle():
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
             print("Cargando informacion de los archivos ....\n")
-            resultados, results = loadResults(control)
-            lista_python = list_python(results)
-            print("Se cargaron" + " " + str(resultados) + " " + "resultados de partidos...\n")
-            print("Primeros tres resultados de los partidos: ")
-            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
-            # print(results["elements"][0:3])
-            print("\n")
-            print("Ultimos tres resultados de partidos: ")
-            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
-            # print(results["elements"][-3:], "\n")
+            resultados1, results = loadResults(control)
+            resultados2, shootouts = loadShootouts(control)
+            resultados3, goalscorers = loadGoalsco(control)
             
-            print("Cargando informacion de los archivos ....\n")
-            resultados, goalscorers = loadGoalsco(control)
-            lista_python = list_python(goalscorers)
-            print("Se cargaron" + " " + str(resultados) + " " + "jugadores que marcaron gol o anotaciones...\n")
-            print("Primeros tres resultados de goleadores: ")
-            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
-            # print(goalscorers["elements"][0:3])
-            print("\n")
-            print("Ultimos tres resultados de goleadores: ")
-            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
-            # print(goalscorers["elements"][-3:], "\n")
+            print(f"=============== Resultados ===============\n\nNumero resultados cargados: {resultados1}\nNumero de goleadores cargados: {resultados2}\nNumero de partidos definidos por penalty-shootouts cargados: {resultados3}\n")
+            print(f"==========================================\n========== FIFA RECORDS REPORT ===========\n==========================================\n")  
             
-            print("Cargando informacion de los archivos ....\n")
-            resultados, shootouts = loadShootouts(control)
-            lista_python = list_python(shootouts)
-            print("Se cargaron" + " " + str(resultados) + " " + "definiciones de partidos desde el punto penal...\n")
-            print("Primeros tres resultados por penales: ")
-            print(tabulate(lista_python[:3], headers="keys", tablefmt="grid"))
-            # print(shootouts["elements"][0:3])
+            lista_python = []
+            
+            for i in lt.iterator(results):
+                lista_python.append(i)
+                
+            
+            print("Se han cargado " + str(resultados1) + "resultados de partidos: \n")
+            print("Existen mas de 6 resultados...")
+            print(tabulate(lista_python[:3]+lista_python[-3:], headers="keys", tablefmt="grid"))
             print("\n")
-            print("Ultimos tres resultados por penales: ")
-            print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
-            # print(shootouts["elements"][-3:], "\n")
+            
+            
+            print("Se han cargado " + str(resultados2) + "Definiciones desde el punto penal: \n")
+            print("Existen mas de 6 resultados...")
+            
+            lista_python = []
+            for i in lt.iterator(shootouts):
+                lista_python.append(i)
+            
+            print(tabulate(lista_python[:3] + lista_python[-3:], headers="keys", tablefmt="grid"))
+            print("\n") 
+            print("Se cargaron " + str(resultados3) + "goleadores: \n")
+            print("Existen mas de 6 resultados...")
+            
+            lista_python = []
+            for i in lt.iterator(goalscorers):
+                lista_python.append(i)
+            
+            print(tabulate(lista_python[:3] + lista_python[-3:], headers="keys", tablefmt="grid"))
+            print("\n")
             
         elif int(inputs) == 2:
-            print_req_1(control)
+            print("==========Req No. 1 inputs==========")
+            matches = int(input("Cantidad de partidos: "))
+            team = input("Team name: ")
+            condition = input("Condicion del equipo: ")
+            print("\n")
+            print_req_1(control, matches, team, condition)
 
         elif int(inputs) == 3:
             print_req_2(control)
 
         elif int(inputs) == 4:
-            print_req_3(control)
+            print("==========Req No. 3 inputs==========")
+            team = input("Nombre del equipo: ")
+            fecha_inicio = input("Fecha de Inicio: ")
+            fecha_fin = input("Fecha de Finalizacion: ")
+            print("\n")
+            print_req_3(control, team, fecha_inicio, fecha_fin)
 
         elif int(inputs) == 5:
             print_req_4(control)
@@ -261,7 +398,12 @@ def menu_cycle():
             print_req_5(control)
 
         elif int(inputs) == 7:
-            print_req_6(control)
+            print("==========Req No. 6 inputs==========")
+            scorers = input("TOP scorer ranking: ")
+            fecha_inicio = input("Start date: ")
+            fecha_fin = input("End date: ")
+            print("\n")
+            print_req_6(control, fecha_inicio, fecha_fin)
 
         elif int(inputs) == 8:
             print_req_7(control)
@@ -348,12 +490,10 @@ def menu_cycle():
             print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
             print("\n")
             
-        elif int(inputs) == 11:
-            size = input("Indique el tamaño de la muestra que desea analizar:")
-            result = controller.sortResults(control, int(size))
-            delta_time = f"{result[0]:.3f}"
-            sorted_list = result[1]
-            print("Para", size, "elementos, delta de tiempo: ", str(delta_time), "[ms]\n")
+            size = input("Indique tamaño de la muestra: ")
+            time, result = controller.sort_data(int(size), control["results"], sort_option)
+            print("Para", size, "elementos, delta tiempo:",
+                  str(time), "[ms]\n")
                 
         elif int(inputs) == 0:
             working = False
@@ -361,11 +501,3 @@ def menu_cycle():
         else:
             print("Opción errónea, vuelva a elegir.\n")
     sys.exit(0)
-    
-if __name__ == "__main__":
-    # TODO modificar main para reserar memoria (parte 2)
-    threading.stack_size(67108864*2)
-    sys.setrecursionlimit(default_limit*1000000)
-    thread = threading.Thread(target=menu_cycle)
-    thread.start()
-    menu_cycle()

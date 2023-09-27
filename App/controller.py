@@ -40,7 +40,7 @@ def new_controller():
     return control
 
 def new_controller_array():
-    control = model.new_data_structs()
+    control = model.new_data_structs_array()
     return control
 
 # Funciones para la carga de datos
@@ -68,32 +68,48 @@ def loadShootouts(control, filename):
 
 # Funciones de ordenamiento
 
-def loadResultsOrd(control, filename, opcion_array):
+def loadResultsOrd(control, filename, opcion_array, sort_option):
     
     input_file = csv.DictReader(open(filename, encoding="utf-8"))
     for i in input_file:
         model.addResultsOrd(control, i, opcion_array)
         
-    model.sort(control["results"])
+    model.sort(control["results"], sort_option)
     return model.resultSize(control), control["results"]
 
-def loadShootoutsOrd(control, filename, opcion_array):
+def loadShootoutsOrd(control, filename, opcion_array, sort_option):
     
     input_file = csv.DictReader(open(filename, encoding="utf-8"))
     for i in input_file:
         model.addShootoutsOrd(control, i, opcion_array)
         
-    model.sort(control["shootouts"])
+    model.sort(control["shootouts"], sort_option)
     return model.shootoutSize(control), control["shootouts"]
 
-def loadGoalscorersOrd(control, filename, opcion_array):
+def loadGoalscorersOrd(control, filename, opcion_array, sort_option):
     
     input_file = csv.DictReader(open(filename, encoding="utf-8"))
     for i in input_file:
         model.addGoalscorersOrd(control, i, opcion_array)
         
-    model.sort(control["goalscorers"])
+    model.sort(control["goalscorers"], sort_option)
     return model.goalscoSize(control), control["goalscorers"]
+
+
+def get_time():
+    return float(time.perf_counter()*1000)
+
+def delt_time(start, end):
+    elaps = float(end - start)
+    return elaps
+
+
+def sort_data(size, lista, sort_option):
+    start = getTime()
+    sorted_result = model.sortThings(lista, sort_option, size)
+    end = getTime()
+    time = deltaTime(start, end)
+    return time, sorted_result
 
 def sortResults(control, size):
     start_time = getTime()
@@ -118,25 +134,58 @@ def sortShootouts(control, size):
 
 # Funciones de consulta sobre el catálogo
 
-def get_data(control, id):
-    """
-    Retorna un dato por su ID.
-    """
-    #TODO: Llamar la función del modelo para obtener un dato
-    pass
+def sort_data(size, lista, sort_option):
+    start = getTime()
+    sorted_result = model.sortThings(lista, sort_option, size)
+    end = getTime()
+    time = deltaTime(start, end)
+    return time, sorted_result
 
-def getResults(control, result):
-    resul = model.getResults(control["model"], result)
-    return resul
+def getDatabyTournament(control, nombre, fecha_inicio, fecha_fin):
+    resultado = model.getDatabyTournament(control["results"], control["shootouts"], nombre, fecha_inicio, fecha_fin)
+    return resultado
 
-def getGoalsco(control, gsco):
-    goalsc = model.getGoalsco(control["model"], gsco)
-    return goalsc
+def getDatabyPlayer(control, nombre, fecha_inicio, fecha_fin):
+    resultado = model.getDatabyPlayer(control["goalscorers"], control["results"], nombre, fecha_inicio, fecha_fin)
+    return resultado
 
-def getShootouts(control, shootout):
-    shoot = model.getShootouts(control["model"], shootout)
-    return shoot
+def getGoalsbyPlayer(control, nombre, size):
+    goles = model.getGoalsbyPlayer(control["goalscorers"], nombre, size)
+    return goles
 
+def getMatchbyTeam(control, team, condition):
+    data_structs = control["results"]
+    results = model.getMatchbyTeam(data_structs, team, condition)
+    return len(results), results
+
+def getResultsbyTeam(control, team, fecha_inicio, fecha_fin):
+    
+    data_structs_results = control["results"]
+    data_structs_goalscorers = control["goalscorers"]
+    
+    results = model.getResultsbyTeam(data_structs_results, data_structs_goalscorers, team, fecha_inicio, fecha_fin)
+    
+    counting_home=0
+    counting_away=0
+    
+    for data in results:
+        if data["home_team"] == team:
+            counting_home += 1
+        else:
+            counting_away += 1
+    return len(results), counting_home, counting_away, results
+
+def getBestTeams(control, fecha_inicio, fecha_fin):
+    
+    data_structs_results = control["results"]
+    data_structs_goalscorers = control["goalscorers"]
+    
+    scorers = model.getBestTeams(data_structs_results, data_structs_goalscorers, fecha_inicio, fecha_fin)
+    
+    return scorers
+
+def getBestPlayers(control):
+    model.getBestPlayers(control, "1900-01-01", "2023-08-01", 17)
 
 def req_1(control):
     """
@@ -198,7 +247,16 @@ def req_8(control):
     Retorna el resultado del requerimiento 8
     """
     # TODO: Modificar el requerimiento 8
-    pass
+    team1 = 'Argentina'
+    team2 = 'Chile'
+    start_d ='1952-03-25'
+    end_d = '2021-11-23'
+    start_time = get_time()
+    n_years1, n_matches1, home_matches1, away_matches1, oldest_date1, newest_match1, elements1, n_years2, n_matches2, home_matches2, away_matches2, oldest_date2, newest_match2, elements2, n_joint_matches, joint_wins1, joint_losses1, joint_wins2, joint_losses2, joint_draws, newest_joint_match, scores = model.req_8(control['model'],team1, team2, start_d, end_d)
+    end_time = get_time()
+    delta = deltaTime(start_time, end_time)
+    print('Tiempo que tomó ejecutar el requerimiento:',delta)
+    return n_years1, n_matches1, home_matches1, away_matches1, oldest_date1, newest_match1, elements1, n_years2, n_matches2, home_matches2, away_matches2, oldest_date2, newest_match2, elements2, n_joint_matches, joint_wins1, joint_losses1, joint_wins2, joint_losses2, joint_draws, newest_joint_match, scores, team1, team2
 
 
 # Funciones para medir tiempos de ejecucion
@@ -216,3 +274,5 @@ def deltaTime(start, end):
     """
     elapsed = float(end - start)
     return elapsed
+
+
