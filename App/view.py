@@ -21,13 +21,13 @@
  """
 
 from tabulate import tabulate
+import threading
 import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
-from time import time
 assert cf
 import traceback
 
@@ -97,7 +97,7 @@ def loadResultsOrd(control, archivo, opcion_array, sort_option):
         resultados = controller.loadResultsOrd(control, "Data/results-utf8-large.csv", opcion_array, sort_option)
     return resultados   
 
-def loadShootoutsOrd(control, archivo, opcion_array):
+def loadShootoutsOrd(control, archivo, opcion_array, sort_option):
     if archivo == "1":
         resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-20pct.csv", opcion_array, sort_option)
     elif archivo == "2":
@@ -106,7 +106,7 @@ def loadShootoutsOrd(control, archivo, opcion_array):
         resultados = controller.loadShootoutsOrd(control, "Data/shootouts-utf8-large.csv", opcion_array, sort_option)
     return resultados
 
-def loadGoalscorersOrd(control, archivo, opcion_array):
+def loadGoalscorersOrd(control, archivo, opcion_array, sort_option):
     if archivo == "1":
         resultados = controller.loadGoalscorersOrd(control, "Data/goalscorers-utf8-20pct.csv", opcion_array, sort_option)
     elif archivo == "2":
@@ -125,13 +125,16 @@ def print_data(control, id):
     printable = controller.get_data(control, id)
     print(printable)
 
+#--------------------------------------------------------------------------------------------------   
+#----------------------------------------Requerimiento 1-------------------------------------------
+
 def print_req_1(control, matches, team, condition):
     """
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
     print("==========Req No. 1 outputs==========")
-    resultados, results = controller.getMatchbyTeam(control, team, condition)
+    resultados, results, tiempo = controller.getMatchbyTeam(control, team, condition)
     if matches > 6:
         print("Total matches found: " + str(resultados) )
         print("Selecting " + str(matches) + " matches...\n")
@@ -144,19 +147,18 @@ def print_req_1(control, matches, team, condition):
         print("Se han cargado " + str(resultados) + " resultados...\n")
         print(tabulate(results[:matches], headers="keys", tablefmt="grid"))
 
+#--------------------------------------------------------------------------------------------------
+#----------------------------------------Requerimiento 2-------------------------------------------
 
 def print_req_2(control):
     """
         Función que imprime la solución del Requerimiento 2 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 2
-    nombre_jugador = input("Ingrese el nombre del jugador a consultar: ")
-    size = input("Ingrese el numero de goles que desea conocer: ")
+    print("==========Req No. 2 outputs==========")
+    printable, tiempo = controller.getGoalsbyPlayer(control, nombre, int(size))
     
-    
-    printable = controller.getGoalsbyPlayer(control, nombre_jugador, int(size))
-    
-    print(f"=============== Req 2 Inputs ===============\n\nNombre del jugador: {nombre_jugador}\nNumero de goles: {size}\n")
+    print(f"=============== Req 2 Inputs ===============\n\nNombre del jugador: {nombre}\nNumero de goles: {size}\n")
     print(f"=============== Req 2 Results ===============\n\nNumero de goles encontrados: {len(printable)}\n")
         
         
@@ -169,13 +171,15 @@ def print_req_2(control):
         print("Se han encontrado menos de 6 registros...")
         print(tabulate(printable, headers="keys", tablefmt="grid"))
 
+#-------------------------------------------------------------------------------------------------        
+#----------------------------------------Requerimiento 3------------------------------------------
 
 def print_req_3(control, team, fecha_inicio, fecha_fin):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 3
-    resultados_total, resultados_local, resultados_visitante,  results = controller.getResultsbyTeam(control, team, fecha_inicio, fecha_fin)
+    resultados_total, resultados_local, resultados_visitante, results = controller.getResultsbyTeam(control, team, fecha_inicio, fecha_fin)
     
     if resultados_total > 6:
         print(str(team) + " Total games: " + str(resultados_total))
@@ -191,6 +195,9 @@ def print_req_3(control, team, fecha_inicio, fecha_fin):
         print(str(team) + " Total home games: " + str(resultados_local))
         print(str(team) + " Total away games: " + str(resultados_visitante))
         print(tabulate(results, headers="keys", tablefmt="grid"))
+
+#-------------------------------------------------------------------------------------------------       
+#-----------------------------------------Requerimiento 4-----------------------------------------
 
 def print_req_4(control):
     """
@@ -219,6 +226,8 @@ def print_req_4(control):
         print("se han encontrado los siguientes resultados: ")
         print(tabulate(list, headers="keys", tablefmt="grid"))
 
+#-------------------------------------------------------------------------------------------------    
+#------------------------------------------Requerimiento 5----------------------------------------
 
 def print_req_5(control):
     """
@@ -250,18 +259,22 @@ def print_req_5(control):
         
     print("Goles", lt.size(printable), "Penales", penalties, "Autos", own_goals)
 
+#-----------------------------------------------------------------------------------------------
+#------------------------------------------Requerimiento 6--------------------------------------
 
 def print_req_6(control):
     """
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    resultados_total, results = controller.getBestTeams(control, fecha_inicio, fecha_fin)
+    resultados_total, results = controller.getBestTeams(control)
     
     
     print("Total games: " + str(resultados_total))
     print(tabulate(results, headers="keys", tablefmt="grid"))
 
+#-----------------------------------------------------------------------------------------------
+#------------------------------------------Requerimiento 7--------------------------------------
 
 def print_req_7(control):
     """
@@ -271,6 +284,8 @@ def print_req_7(control):
     printable = controller.getBestPlayers(control)
     print(printable)
 
+#-----------------------------------------------------------------------------------------------
+#------------------------------------------Requerimiento 8--------------------------------------
 
 def print_req_8(control):
     """
@@ -317,6 +332,9 @@ def print_req_8(control):
     print(f'{tabulate([newest_joint_match], headers="keys", tablefmt="grid")}')
     print(f'{"-"*5} Match scores {"-"*50}')
     print(f'{tabulate(scores, headers="keys", tablefmt="grid")}')
+    
+#-----------------------------------------------------------------------------------------------
+#------------------------------------------Menu principal---------------------------------------
 
 # Se crea el controlador asociado a la vista
 control = new_controller()
@@ -378,10 +396,22 @@ if __name__ == "__main__":
             team = input("Team name: ")
             condition = input("Condicion del equipo: ")
             print("\n")
+            resultados, results, tiempo = controller.getMatchbyTeam(control, team, condition)
             print_req_1(control, matches, team, condition)
+            delta_time = f"{tiempo:.3}"
+            print("El tiempo de ejecucion del requerimiento 1 fue de: " + str(delta_time) + " " + "ms")
+            print("\n")
 
         elif int(inputs) == 3:
+            print("==========Req No. 2 inputs==========")
+            nombre = input("Nombre del jugador: ")
+            size = input("Numero de goles: ")
+            print("\n")
+            printable, tiempo = controller.getGoalsbyPlayer(control, nombre, int(size))
+            print("\n")
             print_req_2(control)
+            delta_time = f"{tiempo:.3}"
+            print("El tiempo de ejecucion del requerimiento 2 fue de: " + str(delta_time) + " " + "ms")
 
         elif int(inputs) == 4:
             print("==========Req No. 3 inputs==========")
@@ -390,6 +420,7 @@ if __name__ == "__main__":
             fecha_fin = input("Fecha de Finalizacion: ")
             print("\n")
             print_req_3(control, team, fecha_inicio, fecha_fin)
+            
 
         elif int(inputs) == 5:
             print_req_4(control)
@@ -403,7 +434,7 @@ if __name__ == "__main__":
             fecha_inicio = input("Start date: ")
             fecha_fin = input("End date: ")
             print("\n")
-            print_req_6(control, fecha_inicio, fecha_fin)
+            print_req_6(control)
 
         elif int(inputs) == 8:
             print_req_7(control)
@@ -457,7 +488,7 @@ if __name__ == "__main__":
                 print("No ha escogido una opcion valida: Se ejecutara el ordamiento por defecto: ")
                 muestra = "shell"
                 
-            resultados, results = loadResultsOrd(control, opcion, muestra)
+            resultados, results = loadResultsOrd(control, opcion, muestra, sort_option)
             lista_python = list_python(results)
             print("Cargando archivos...")
             print("Se cargaron" + str(resultados) + "resultados de partidos. ")
@@ -468,7 +499,7 @@ if __name__ == "__main__":
             print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
             print("\n")
             
-            resultados, goalscorers = loadGoalscorersOrd(control, opcion, muestra)
+            resultados, goalscorers = loadGoalscorersOrd(control, opcion, muestra, sort_option)
             lista_python = list_python(goalscorers)
             print("Cargando archivos...")
             print("Se cargaron" + str(resultados) + "goleadores de torneos. ")
@@ -479,7 +510,7 @@ if __name__ == "__main__":
             print(tabulate(lista_python[-3:], headers="keys", tablefmt="grid"))
             print("\n")
             
-            resultados, shootouts = loadShootoutsOrd(control, opcion, muestra)
+            resultados, shootouts = loadShootoutsOrd(control, opcion, muestra, sort_option)
             lista_python = list_python(shootouts)
             print("Cargando archivos...")
             print("Se cargaron" + str(resultados) + "resultados de partidos desde el punto penal. ")

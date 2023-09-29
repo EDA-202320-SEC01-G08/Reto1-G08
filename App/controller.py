@@ -141,22 +141,31 @@ def sort_data(size, lista, sort_option):
     time = deltaTime(start, end)
     return time, sorted_result
 
-def getDatabyTournament(control, nombre, fecha_inicio, fecha_fin):
-    resultado = model.getDatabyTournament(control["results"], control["shootouts"], nombre, fecha_inicio, fecha_fin)
-    return resultado
-
-def getDatabyPlayer(control, nombre, fecha_inicio, fecha_fin):
-    resultado = model.getDatabyPlayer(control["goalscorers"], control["results"], nombre, fecha_inicio, fecha_fin)
-    return resultado
-
-def getGoalsbyPlayer(control, nombre, size):
-    goles = model.getGoalsbyPlayer(control["goalscorers"], nombre, size)
-    return goles
+#-----------------------------------------------------------------------------------------------------
+#----------------------------------------Requerimiento 1----------------------------------------------
 
 def getMatchbyTeam(control, team, condition):
     data_structs = control["results"]
+    start = getTime()
     results = model.getMatchbyTeam(data_structs, team, condition)
-    return len(results), results
+    end = getTime()
+    tamaño_resultados = len(results)
+    tiempo = deltaTime(start, end)
+    return tamaño_resultados, results, tiempo
+
+#-----------------------------------------------------------------------------------------------------
+#----------------------------------------Requerimiento 2----------------------------------------------
+
+def getGoalsbyPlayer(control, nombre, size):
+    data_structs = control["goalscorers"]
+    start = getTime()
+    goles = model.getGoalsbyPlayer(data_structs, nombre, size)
+    end = getTime()
+    tiempo = deltaTime(start, end)
+    return goles, tiempo
+
+#-----------------------------------------------------------------------------------------------------
+#----------------------------------------Requerimiento 3----------------------------------------------
 
 def getResultsbyTeam(control, team, fecha_inicio, fecha_fin):
     
@@ -175,71 +184,34 @@ def getResultsbyTeam(control, team, fecha_inicio, fecha_fin):
             counting_away += 1
     return len(results), counting_home, counting_away, results
 
-def getBestTeams(control, fecha_inicio, fecha_fin):
-    
-    data_structs_results = control["results"]
-    data_structs_goalscorers = control["goalscorers"]
-    
-    scorers = model.getBestTeams(data_structs_results, data_structs_goalscorers, fecha_inicio, fecha_fin)
-    
-    return scorers
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------Requerimiento 4---------------------------------------------
+
+def getDatabyTournament(control, nombre, fecha_inicio, fecha_fin):
+    resultado = model.getDatabyTournament(control["results"], control["shootouts"], nombre, fecha_inicio, fecha_fin)
+    return resultado
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------Requerimiento 5---------------------------------------------
+
+def getDatabyPlayer(control, nombre, fecha_inicio, fecha_fin):
+    resultado = model.getDatabyPlayer(control["goalscorers"], control["results"], nombre, fecha_inicio, fecha_fin)
+    return resultado
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------Requerimiento 6---------------------------------------------
+
+def getBestTeams(control, numero_equipos, torneo, lim_inf, lim_sup):
+    resultado = model.req_6(control["goalscorers"], control["results"], numero_equipos, torneo, lim_inf, lim_sup)
+    return resultado
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------Requerimiento 7---------------------------------------------
 
 def getBestPlayers(control):
     model.getBestPlayers(control, "1900-01-01", "2023-08-01", 17)
-
-def req_1(control):
-    """
-    Retorna el resultado del requerimiento 1
-    """
-    # TODO: Modificar el requerimiento 1
-    pass
-
-
-def req_2(control):
-    """
-    Retorna el resultado del requerimiento 2
-    """
-    # TODO: Modificar el requerimiento 2
-    pass
-
-
-def req_3(control):
-    """
-    Retorna el resultado del requerimiento 3
-    """
-    # TODO: Modificar el requerimiento 3
-    pass
-
-
-def req_4(control):
-    """
-    Retorna el resultado del requerimiento 4
-    """
-    # TODO: Modificar el requerimiento 4
-    pass
-
-
-def req_5(control):
-    """
-    Retorna el resultado del requerimiento 5
-    """
-    # TODO: Modificar el requerimiento 5
-    pass
-
-def req_6(control):
-    """
-    Retorna el resultado del requerimiento 6
-    """
-    # TODO: Modificar el requerimiento 6
-    pass
-
-
-def req_7(control):
-    """
-    Retorna el resultado del requerimiento 7
-    """
-    # TODO: Modificar el requerimiento 7
-    pass
+    
+#----------------------------------------------------------------------------------------------------
 
 
 def req_8(control):
@@ -251,9 +223,9 @@ def req_8(control):
     team2 = 'Chile'
     start_d ='1952-03-25'
     end_d = '2021-11-23'
-    start_time = get_time()
+    start_time = getTime()
     n_years1, n_matches1, home_matches1, away_matches1, oldest_date1, newest_match1, elements1, n_years2, n_matches2, home_matches2, away_matches2, oldest_date2, newest_match2, elements2, n_joint_matches, joint_wins1, joint_losses1, joint_wins2, joint_losses2, joint_draws, newest_joint_match, scores = model.req_8(control['model'],team1, team2, start_d, end_d)
-    end_time = get_time()
+    end_time = getTime()
     delta = deltaTime(start_time, end_time)
     print('Tiempo que tomó ejecutar el requerimiento:',delta)
     return n_years1, n_matches1, home_matches1, away_matches1, oldest_date1, newest_match1, elements1, n_years2, n_matches2, home_matches2, away_matches2, oldest_date2, newest_match2, elements2, n_joint_matches, joint_wins1, joint_losses1, joint_wins2, joint_losses2, joint_draws, newest_joint_match, scores, team1, team2
