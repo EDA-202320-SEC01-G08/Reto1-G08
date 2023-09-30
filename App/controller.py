@@ -149,9 +149,9 @@ def getMatchbyTeam(control, team, condition):
     start = getTime()
     results = model.getMatchbyTeam(data_structs, team, condition)
     end = getTime()
-    tamaño_resultados = len(results)
+    resultados = len(results)
     tiempo = deltaTime(start, end)
-    return tamaño_resultados, results, tiempo
+    return results, resultados, tiempo
 
 #-----------------------------------------------------------------------------------------------------
 #----------------------------------------Requerimiento 2----------------------------------------------
@@ -168,35 +168,34 @@ def getGoalsbyPlayer(control, nombre, size):
 #----------------------------------------Requerimiento 3----------------------------------------------
 
 def getResultsbyTeam(control, team, fecha_inicio, fecha_fin):
-    
+
     data_structs_results = control["results"]
     data_structs_goalscorers = control["goalscorers"]
-    
-    results = model.getResultsbyTeam(data_structs_results, data_structs_goalscorers, team, fecha_inicio, fecha_fin)
-    
-    counting_home=0
-    counting_away=0
-    
-    for data in results:
-        if data["home_team"] == team:
-            counting_home += 1
-        else:
-            counting_away += 1
-    return len(results), counting_home, counting_away, results
+    resuls, results_local, results_visitante = model.getResultsbyTeam(data_structs_results, data_structs_goalscorers, team, fecha_inicio, fecha_fin)
+    results_total = len(resuls)
+    return resuls, results_local, results_visitante, results_total
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------Requerimiento 4---------------------------------------------
 
 def getDatabyTournament(control, nombre, fecha_inicio, fecha_fin):
-    resultado = model.getDatabyTournament(control["results"], control["shootouts"], nombre, fecha_inicio, fecha_fin)
-    return resultado
+    data_structs_results = control["results"]
+    data_structs_shootouts = control["shootouts"]
+    start = getTime()
+    printable, paises, ciudades = model.getDatabyTournament(data_structs_results, data_structs_shootouts, nombre, fecha_inicio, fecha_fin)
+    end = getTime()
+    tiempo = deltaTime(start, end)
+    return printable, paises, ciudades, tiempo
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------Requerimiento 5---------------------------------------------
 
 def getDatabyPlayer(control, nombre, fecha_inicio, fecha_fin):
-    resultado = model.getDatabyPlayer(control["goalscorers"], control["results"], nombre, fecha_inicio, fecha_fin)
-    return resultado
+    start = getTime()
+    resultado, penaltis, autogoles, torneos = model.getDatabyPlayer(control["goalscorers"], control["results"], nombre, fecha_inicio, fecha_fin)
+    end = getTime()
+    tiempo = deltaTime(start, end)
+    return resultado, penaltis, autogoles, torneos, tiempo
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------Requerimiento 6---------------------------------------------

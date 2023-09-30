@@ -367,7 +367,7 @@ def getResultsbyTeam(data_structs_results, data_structs_goalscorers, team, fecha
             continue
         if not (getDate(fecha_inicio) <= getDate(data1["date"]) <= getDate(fecha_fin)):
             continue
-
+        
         del data1["neutral"]
         data1["penalty"] = data1["own_goal"] = "Unknown"
         for data2 in lt.iterator(data_structs_goalscorers):
@@ -375,16 +375,25 @@ def getResultsbyTeam(data_structs_results, data_structs_goalscorers, team, fecha
                 data1["own_goal"], data1["penalty"] = data2["own_goal"], data2["penalty"]
         data1["own_goal"] = True
         list_results.append(data1)
+    
+    counting_home=0
+    counting_away=0  
+    
+    for data in list_results:
+        if data["home_team"] == team:
+            counting_home += 1
+        else:
+            counting_away += 1
         
-    return list_results
+    return list_results, counting_home, counting_away
 
 #--------------------------------------------------------------------------------------------
 #--------------------------------------Requerimiento 4---------------------------------------
 
 def getDatabyTournament(data_structs_results, data_structs_shootouts, id, fecha_inicio, fecha_fin):
     data = lt.newList("ARRAY_LIST", cmpfunction=comparetournament)
-    paises = []
-    ciudades = []
+    countries = []
+    cities = []
     
     for register in lt.iterator(data_structs_results):
         if register["tournament"].lower() == id.lower():
@@ -400,12 +409,12 @@ def getDatabyTournament(data_structs_results, data_structs_shootouts, id, fecha_
                 
     new_data = date_filter(data, fecha_inicio, fecha_fin)
     for i in lt.iterator(new_data):
-        if i['country'] not in paises:
-            paises.append(i["country"])
-        if i['city'] not in ciudades:
-            ciudades.append(i['city'])
+        if i['country'] not in countries:
+            countries.append(i["country"])
+        if i['city'] not in cities:
+            cities.append(i['city'])
     
-    return new_data, paises, ciudades
+    return new_data, countries, cities
 
 #--------------------------------------------------------------------------------------------
 #--------------------------------------Requerimiento 5---------------------------------------

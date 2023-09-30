@@ -134,7 +134,7 @@ def print_req_1(control, matches, team, condition):
     """
     # TODO: Imprimir el resultado del requerimiento 1
     print("==========Req No. 1 outputs==========")
-    resultados, results, tiempo = controller.getMatchbyTeam(control, team, condition)
+    results, resultados, tiempo = controller.getMatchbyTeam(control, team, condition)
     if matches > 6:
         print("Total matches found: " + str(resultados) )
         print("Selecting " + str(matches) + " matches...\n")
@@ -179,12 +179,13 @@ def print_req_3(control, team, fecha_inicio, fecha_fin):
         Función que imprime la solución del Requerimiento 3 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 3
-    resultados_total, resultados_local, resultados_visitante, results = controller.getResultsbyTeam(control, team, fecha_inicio, fecha_fin)
+    print("==========Req No. 3 outputs==========")
+    results, local, visitante, resultados_total = controller.getResultsbyTeam(control, team, fecha_inicio, fecha_fin)
     
     if resultados_total > 6:
         print(str(team) + " Total games: " + str(resultados_total))
-        print(str(team) + " Total home games: " + str(resultados_local))
-        print(str(team) + " Total away games: " + str(resultados_visitante))
+        print(str(team) + " Total home games: " + str(local))
+        print(str(team) + " Total away games: " + str(visitante))
         print("Primeros tres resultados:")
         print(tabulate(results[:3], headers="keys", tablefmt="grid"))
         print("\n")
@@ -192,8 +193,8 @@ def print_req_3(control, team, fecha_inicio, fecha_fin):
         print(tabulate(results[-3:], headers="keys", tablefmt="grid"))
     else:
         print(str(team) + " Total games: " + str(resultados_total))
-        print(str(team) + " Total home games: " + str(resultados_local))
-        print(str(team) + " Total away games: " + str(resultados_visitante))
+        print(str(team) + " Total home games: " + str(local))
+        print(str(team) + " Total away games: " + str(visitante))
         print(tabulate(results, headers="keys", tablefmt="grid"))
 
 #-------------------------------------------------------------------------------------------------       
@@ -204,11 +205,8 @@ def print_req_4(control):
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
-    nombre_torneo = input("Ingrese el nombre del torneo: ")
-    print("Ingrese el periodo de fechas en el que se disputa el torneo: (YYYY-MM-DD)")
-    fecha_inicio = input("Fecha de inicio: ")
-    fecha_fin = input("Fecha de finalizacion del torneo: ")
-    printable, paises, ciudades = controller.getDatabyTournament(control, nombre_torneo, fecha_inicio, fecha_fin)
+    print("==========Req No. 4 outputs==========")
+    printable, paises, ciudades, tiempo = controller.getDatabyTournament(control, nombre_torneo, fecha_inicio, fecha_fin)
     list = []
     for i in lt.iterator(printable):
         i.pop("neutral")
@@ -234,19 +232,15 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
-    nombre_jugador = input("ingrese el nombre del jugador que desea conocer: ")
-    print("ingrese el intervalo de fechas del periodo que desea conocer: (YYYY-MM-DD)")
-    fecha_inicio = input("Fecha de inicio: ")
-    fecha_fin = input("Fecha de finalizacion: ")
-    printable, penalties, own_goals, tournaments = controller.getDatabyPlayer(control, nombre_jugador, fecha_inicio, fecha_fin)
+    printable, penaltis, autogoles, torneos, tiempo = controller.getDatabyPlayer(control, nombre, fecha_inicio, fecha_fin)
       
     list = []
     for i in lt.iterator(printable):
         i.pop("scorer")
         list.append(i)
     
-    print(f"=============== Req 5 Inputs ===============\n\nJugador: {nombre_jugador}\nFecha inicio: {fecha_inicio}\nFecha final: {fecha_fin}\n")
-    print(f"=============== Req 5 Results ===============\n\n{nombre_jugador} goles totales: {lt.size(printable)}\n{nombre_jugador} torneos totales:{tournaments}\n{nombre_jugador} total de penalties: {penalties}\n{nombre_jugador} total de autogoles: {own_goals}\n")
+    print(f"=============== Req 5 Inputs ===============\n\nJugador: {nombre}\nFecha inicio: {fecha_inicio}\nFecha final: {fecha_fin}\n")
+    print(f"=============== Req 5 Results ===============\n\n{nombre} goles totales: {lt.size(printable)}\n{nombre} torneos totales:{torneos}\n{nombre} total de penalties: {penaltis}\n{nombre} total de autogoles: {autogoles}\n")
     
     if len(list) > 6:
         print("Se han encontrado mas de 6 resultados: ")
@@ -257,7 +251,7 @@ def print_req_5(control):
         print("Se han encontrado los siguientes resultados: ")
         print(tabulate(list, headers="keys", tablefmt="grid"))
         
-    print("Goles", lt.size(printable), "Penales", penalties, "Autos", own_goals)
+    print("Goles", lt.size(printable), "Penales", penaltis, "Autos", autogoles)
 
 #-----------------------------------------------------------------------------------------------
 #------------------------------------------Requerimiento 6--------------------------------------
@@ -390,43 +384,57 @@ if __name__ == "__main__":
             print(tabulate(lista_python[:3] + lista_python[-3:], headers="keys", tablefmt="grid"))
             print("\n")
             
-        elif int(inputs) == 2:
+        elif int(inputs) == 2:                                                          # Req. 1 : COMPLETADO
             print("==========Req No. 1 inputs==========")
             matches = int(input("Cantidad de partidos: "))
             team = input("Team name: ")
             condition = input("Condicion del equipo: ")
             print("\n")
-            resultados, results, tiempo = controller.getMatchbyTeam(control, team, condition)
+            results, resultados, tiempo = controller.getMatchbyTeam(control, team, condition)
             print_req_1(control, matches, team, condition)
             delta_time = f"{tiempo:.3}"
             print("El tiempo de ejecucion del requerimiento 1 fue de: " + str(delta_time) + " " + "ms")
             print("\n")
 
-        elif int(inputs) == 3:
+        elif int(inputs) == 3:                                                          # Req. 2 : COMPLETADO
             print("==========Req No. 2 inputs==========")
             nombre = input("Nombre del jugador: ")
             size = input("Numero de goles: ")
             print("\n")
             printable, tiempo = controller.getGoalsbyPlayer(control, nombre, int(size))
-            print("\n")
             print_req_2(control)
             delta_time = f"{tiempo:.3}"
             print("El tiempo de ejecucion del requerimiento 2 fue de: " + str(delta_time) + " " + "ms")
 
-        elif int(inputs) == 4:
+        elif int(inputs) == 4:                                                          # Req. 3 : COMPLETADO
             print("==========Req No. 3 inputs==========")
             team = input("Nombre del equipo: ")
             fecha_inicio = input("Fecha de Inicio: ")
             fecha_fin = input("Fecha de Finalizacion: ")
             print("\n")
             print_req_3(control, team, fecha_inicio, fecha_fin)
-            
 
-        elif int(inputs) == 5:
+        elif int(inputs) == 5:                                                          # Req. 4 : COMPLETADO
+            print("==========Req No. 4 inputs==========")
+            nombre_torneo = input("Nombre del torneo: ")
+            fecha_inicio = input("Fecha de inicio: ")
+            fecha_fin = input("Fecha de finalizacion: ")
+            print("\n")
+            printable, paises, ciudades, tiempo = controller.getDatabyTournament(control, nombre_torneo, fecha_inicio, fecha_fin)
             print_req_4(control)
+            delta_time = f"{tiempo:.3}"
+            print("El tiempo de ejecucion del requerimiento 4 fue de: " + str(delta_time) + " " + "ms")
 
-        elif int(inputs) == 6:
+        elif int(inputs) == 6:                                                          # Req. 5 : COMPLETADO
+            print("==========Req No. 5 inputs==========")
+            nombre = input("ingrese el nombre del jugador que desea conocer: ")
+            fecha_inicio = input("Fecha de inicio: ")
+            fecha_fin = input("Fecha de finalizacion: ")
+            print("\n")
+            printable, penaltis, autogoles, torneos, tiempo = controller.getDatabyPlayer(control, nombre, fecha_inicio, fecha_fin)
             print_req_5(control)
+            delta_time = f"{tiempo:.3}"
+            print("El tiempo de ejecucion del requerimiento 5 fue de: " + str(delta_time) + " " + "ms")
 
         elif int(inputs) == 7:
             print("==========Req No. 6 inputs==========")
