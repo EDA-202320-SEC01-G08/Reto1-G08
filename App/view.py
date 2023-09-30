@@ -262,11 +262,14 @@ def print_req_6(control):
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    resultados_total, results = controller.getBestTeams(control)
+    print("==========Req No. 6 outputs==========")
+    partidos_total, partidos_torneo, paises, ciudades, city, respuesta_final, tiempo = controller.getBestTeams(control, numero_equipos, fecha_inicio, fecha_fin)
     
-    
-    print("Total games: " + str(resultados_total))
-    print(tabulate(results, headers="keys", tablefmt="grid"))
+    if lt.size(respuesta_final) > 6:
+        print(respuesta_final)
+    else: 
+        print(tabulate(respuesta_final["elements"], headers = "keys", tablefmt="grid"))
+        
 
 #-----------------------------------------------------------------------------------------------
 #------------------------------------------Requerimiento 7--------------------------------------
@@ -443,8 +446,15 @@ if __name__ == "__main__":
             scorers = input("TOP scorer ranking: ")
             fecha_inicio = input("Start date: ")
             fecha_fin = input("End date: ")
+            lim_inf = input("Limite inferior: ")
+            lim_sup = input("Limite superior: ")
+            numero_equipos = input("Numero de equipos: ")
+            torneo = input("Nombre del torneo: ")
             print("\n")
+            partidos_total, partidos_torneo, paises, ciudades, city, respuesta_final = controller.getBestTeams(control, numero_equipos, torneo, lim_inf, lim_sup)
             print_req_6(control)
+            delta_time = f"{tiempo:.3}"
+            print("El tiempo de ejecucion del requerimiento 6 fue de: " + str(delta_time) + " " + "ms")
 
         elif int(inputs) == 8:                                                          # Req. 7 : COMPLETADO
             print("==========Req No. 7 inputs==========")

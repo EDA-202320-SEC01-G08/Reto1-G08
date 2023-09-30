@@ -201,8 +201,13 @@ def getDatabyPlayer(control, nombre, fecha_inicio, fecha_fin):
 #----------------------------------------Requerimiento 6---------------------------------------------
 
 def getBestTeams(control, numero_equipos, torneo, lim_inf, lim_sup):
-    resultado = model.req_6(control["goalscorers"], control["results"], numero_equipos, torneo, lim_inf, lim_sup)
-    return resultado
+    data_structs_goalscorers = control["goalscorers"]
+    data_structs_results = control["results"]
+    start = getTime()
+    partidos_total, partidos_torneo, paises, ciudades, city, respuesta_final = model.getBestTeams(data_structs_goalscorers, data_structs_results, numero_equipos, torneo, lim_inf, lim_sup)
+    end = getTime()
+    tiempo = deltaTime(start, end)
+    return partidos_total, partidos_torneo, paises, ciudades, city, respuesta_final, tiempo
 
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------Requerimiento 7---------------------------------------------

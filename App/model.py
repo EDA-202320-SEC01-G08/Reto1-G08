@@ -457,7 +457,7 @@ def getDatabyPlayer(data_structs_goalscorers, data_structs_results, id, fecha_in
 #--------------------------------------------------------------------------------------------
 #--------------------------------------Requerimiento 6---------------------------------------
 
-def req_6(data, numero_equipos, torneo, lim_inf, lim_sup):
+def getBestTeams(data, numero_equipos, torneo, lim_inf, lim_sup):
 
     current_date = ((dt.strptime(lim_sup,"%Y-%m-%d")).date()).toordinal()
     top_date = ((dt.strptime(lim_inf,"%Y-%m-%d")).date()).toordinal()
