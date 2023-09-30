@@ -457,24 +457,24 @@ def getDatabyPlayer(data_structs_goalscorers, data_structs_results, id, fecha_in
 #--------------------------------------------------------------------------------------------
 #--------------------------------------Requerimiento 6---------------------------------------
 
-def req_6(control, numero_equipos, torneo, lim_inf, lim_sup):
+def req_6(data, numero_equipos, torneo, lim_inf, lim_sup):
 
     current_date = ((dt.strptime(lim_sup,"%Y-%m-%d")).date()).toordinal()
     top_date = ((dt.strptime(lim_inf,"%Y-%m-%d")).date()).toordinal()
-    resultados = control["results"]
+    resultados = data["results"]
     partidos_torneo = lt.newList("ARRAY_LIST")
     paises = lt.newList("ARRAY_LIST")
     ciudades = lt.newList("ARRAY_LIST")
     ciudades_mas_partidos = {}
     maximo = 0
-    scorers = control["goal_scorers"]
+    scorers = data["goal_scorers"]
     scorers_2 = lt.newList("ARRAY_LIST")
     teams = lt.newList("ARRAY_LIST")
     rta = lt.newList("ARRAY_LIST")
     i = 1
 
     while current_date >= top_date:
-        r = lt.getElement(control["results"], i)
+        r = lt.getElement(data["results"], i)
         if r["tournament"] == torneo:
             fecha = r["date"]
             if rango_by_fecha(fecha, lim_inf, lim_sup) == True:
@@ -499,7 +499,7 @@ def req_6(control, numero_equipos, torneo, lim_inf, lim_sup):
         current_date = ((dt.strptime( r["date"],"%Y-%m-%d")).date()).toordinal()
         i += 1
 
-    scorers = find_goal_scorers_2(control["goal_scorers"], partidos_torneo)
+    scorers = find_goal_scorers_2(data["goal_scorers"], partidos_torneo)
     teams_final = find_teams(scorers, teams)
 
     for equipo in lt.iterator(teams_final):
@@ -550,21 +550,26 @@ def req_6(control, numero_equipos, torneo, lim_inf, lim_sup):
     respuesta_final = sa.sort(rta, cmp_total_point)
     if lt.size(rta) > int(numero_equipos):
         respuesta_final = lt.subList(rta, 1, int(numero_equipos))
+    
     return lt.size(teams_final), lt.size(partidos_torneo), lt.size(paises), lt.size(ciudades), ciudad, respuesta_final
 
 #--------------------------------------------------------------------------------------------
 #--------------------------------------Requerimiento 7---------------------------------------
 
-def getBestPlayers(data_structs, fecha_inicio, fecha_fin, amount):
-    
+def getBestPlayers(data_structs, initial_date, final_date, amount):
+    """
+    Función que soluciona el requerimiento 7
+    """
+    # TODO: Realizar el requerimiento 7
+
     relevant_matches = lt.newList(datastructure="ARRAY_LIST")
     matches_position = {}
 
-    fecha_inicio = getDate(fecha_inicio)
-    fecha_fin = getDate(fecha_fin)
+    initial_date = getDate(initial_date)
+    final_date = getDate(final_date)
 
     for i in lt.iterator(data_structs["results"]):
-        if i["tournament"] != "Friendly" and (fecha_inicio <= getDate(i["date"]) <= fecha_fin):
+        if i["tournament"] != "Friendly" and (initial_date <= getDate(i["date"]) <= final_date):
             lt.addLast(relevant_matches, i)
             matches_position[f"{i['date']}={i['home_team']}={i['away_team']}"] = lt.size(relevant_matches)
 
@@ -616,6 +621,29 @@ def getBestPlayers(data_structs, fecha_inicio, fecha_fin, amount):
     return scorers
 
 #-------------------------------------------------------------------------------------------
+
+def sort_by_score(s1, s2):
+    if s1["score"] != s2["score"]:
+        return s1["score"] > s2["score"]
+
+    if s1["goals"] != s2["goals"]:
+        return s1["goals"] > s2["goals"]
+
+    if s1["penalties"] != s2["penalties"]:
+        return s1["penalties"] > s2["penalties"]
+
+    if s1["own_goals"] != s2["own_goals"]:
+        return s1["own_goals"] > s2["own_goals"]
+
+    if len(s1["times"]) == 0 or len(s2["times"]) == 0:
+        return s1["name"] < s2["name"]
+
+    s1avg = sum(s1["times"]) / len(s1["times"])
+    s2avg = sum(s2["times"]) / len(s2["times"])
+
+    if s1avg != s2avg:
+        return s1avg < s2avg
+    return s1["name"] < s2["name"]
 
 def getDate(date):
     return dt.strptime(date, "%Y-%m-%d")

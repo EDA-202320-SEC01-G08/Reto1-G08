@@ -232,6 +232,7 @@ def print_req_5(control):
         Función que imprime la solución del Requerimiento 5 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 5
+    print("==========Req No. 5 outputs==========")
     printable, penaltis, autogoles, torneos, tiempo = controller.getDatabyPlayer(control, nombre, fecha_inicio, fecha_fin)
       
     list = []
@@ -275,6 +276,7 @@ def print_req_7(control):
         Función que imprime la solución del Requerimiento 7 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 7
+    print("==========Req No. 4 outputs==========")
     printable = controller.getBestPlayers(control)
     print(printable)
 
@@ -436,7 +438,7 @@ if __name__ == "__main__":
             delta_time = f"{tiempo:.3}"
             print("El tiempo de ejecucion del requerimiento 5 fue de: " + str(delta_time) + " " + "ms")
 
-        elif int(inputs) == 7:
+        elif int(inputs) == 7:                                                          # Req. 6 : EN PROCESO
             print("==========Req No. 6 inputs==========")
             scorers = input("TOP scorer ranking: ")
             fecha_inicio = input("Start date: ")
@@ -444,8 +446,12 @@ if __name__ == "__main__":
             print("\n")
             print_req_6(control)
 
-        elif int(inputs) == 8:
+        elif int(inputs) == 8:                                                          # Req. 7 : COMPLETADO
+            print("==========Req No. 7 inputs==========")
+            printable, tiempo = controller.getBestPlayers(control)
             print_req_7(control)
+            delta_time = f"{tiempo:.3}"
+            print("El tiempo de ejecucion del requerimiento 7 fue de: " + str(delta_time) + " " + "ms")
 
         elif int(inputs) == 9:
             print_req_8(control)

@@ -208,7 +208,11 @@ def getBestTeams(control, numero_equipos, torneo, lim_inf, lim_sup):
 #----------------------------------------Requerimiento 7---------------------------------------------
 
 def getBestPlayers(control):
-    model.getBestPlayers(control, "1900-01-01", "2023-08-01", 17)
+    start = getTime()
+    printable = model.getBestPlayers(control, "1900-01-01", "2023-08-01", 17)
+    end = getTime()
+    tiempo = deltaTime(start, end)
+    return printable, tiempo
     
 #----------------------------------------------------------------------------------------------------
 
